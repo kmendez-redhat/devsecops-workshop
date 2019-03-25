@@ -13,83 +13,83 @@ objects:
     labels:
       app: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
-- kind: Service
-  apiVersion: v1
-  metadata:
-    annotations:
-      description: Exposes the database server
-    name: ${APPLICATION_NAME}-postgresql
-  spec:
-    ports:
-    - name: postgresql
-      port: 5432
-      targetPort: 5432
-    selector:
-      name: ${APPLICATION_NAME}-postgresql
-- kind: DeploymentConfig
-  apiVersion: v1
-  metadata:
-    annotations:
-      description: Defines how to deploy the database
-    name: ${APPLICATION_NAME}-postgresql
-    labels:
-      app: ${APPLICATION_NAME}
-  spec:
-    replicas: 1
-    selector:
-      name: ${APPLICATION_NAME}-postgresql
-    strategy:
-      type: Recreate
-    template:
-      metadata:
-        labels:
-          name: ${APPLICATION_NAME}-postgresql
-        name: ${APPLICATION_NAME}-postgresql
-      spec:
-        serviceAccountName: ${APPLICATION_NAME}
-        containers:
-        - env:
-          - name: POSTGRESQL_USER
-            value: ${DATABASE_USER}
-          - name: POSTGRESQL_PASSWORD
-            value: ${DATABASE_PASSWORD}
-          - name: POSTGRESQL_DATABASE
-            value: ${DATABASE_NAME}
-          - name: POSTGRESQL_MAX_CONNECTIONS
-            value: ${DATABASE_MAX_CONNECTIONS}
-          - name: POSTGRESQL_SHARED_BUFFERS
-            value: ${DATABASE_SHARED_BUFFERS}
-          - name: POSTGRESQL_ADMIN_PASSWORD
-            value: ${DATABASE_ADMIN_PASSWORD}
-          image: 'registry.access.redhat.com/rhscl/postgresql-96-rhel7'
-          livenessProbe:
-            initialDelaySeconds: 30
-            tcpSocket:
-              port: 5432
-            timeoutSeconds: 1
-          name: postgresql
-          ports:
-          - containerPort: 5432
-          readinessProbe:
-            exec:
-              command:
-              - /bin/sh
-              - -i
-              - -c
-              - psql -h 127.0.0.1 -U ${POSTGRESQL_USER} -q -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'
-            initialDelaySeconds: 5
-            timeoutSeconds: 1
-          resources:
-            limits:
-              memory: 512Mi
-          volumeMounts:
-          - mountPath: /var/lib/pgsql/data
-            name: gogs-postgres-data
-        volumes:
-        - name: gogs-postgres-data
-          emptyDir: {}
-    triggers:
-    - type: ConfigChange
+#- kind: Service
+#  apiVersion: v1
+#  metadata:
+#    annotations:
+#      description: Exposes the database server
+#    name: ${APPLICATION_NAME}-postgresql
+#  spec:
+#    ports:
+#    - name: postgresql
+#      port: 5432
+#      targetPort: 5432
+#    selector:
+#      name: ${APPLICATION_NAME}-postgresql
+#- kind: DeploymentConfig
+#  apiVersion: v1
+#  metadata:
+#    annotations:
+#      description: Defines how to deploy the database
+#    name: ${APPLICATION_NAME}-postgresql
+#    labels:
+#      app: ${APPLICATION_NAME}
+#  spec:
+#    replicas: 1
+#    selector:
+#      name: ${APPLICATION_NAME}-postgresql
+#    strategy:
+#      type: Recreate
+#    template:
+#      metadata:
+#        labels:
+#          name: ${APPLICATION_NAME}-postgresql
+#        name: ${APPLICATION_NAME}-postgresql
+#      spec:
+#        serviceAccountName: ${APPLICATION_NAME}
+#        containers:
+#        - env:
+#          - name: POSTGRESQL_USER
+#            value: ${DATABASE_USER}
+#          - name: POSTGRESQL_PASSWORD
+#            value: ${DATABASE_PASSWORD}
+#          - name: POSTGRESQL_DATABASE
+#            value: ${DATABASE_NAME}
+#          - name: POSTGRESQL_MAX_CONNECTIONS
+#            value: ${DATABASE_MAX_CONNECTIONS}
+#          - name: POSTGRESQL_SHARED_BUFFERS
+#            value: ${DATABASE_SHARED_BUFFERS}
+#          - name: POSTGRESQL_ADMIN_PASSWORD
+#            value: ${DATABASE_ADMIN_PASSWORD}
+#          image: 'registry.access.redhat.com/rhscl/postgresql-96-rhel7'
+#          livenessProbe:
+#            initialDelaySeconds: 30
+#            tcpSocket:
+#              port: 5432
+#            timeoutSeconds: 1
+#          name: postgresql
+#          ports:
+#          - containerPort: 5432
+#          readinessProbe:
+#            exec:
+#              command:
+#              - /bin/sh
+#              - -i
+#              - -c
+#              - psql -h 127.0.0.1 -U ${POSTGRESQL_USER} -q -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'
+#            initialDelaySeconds: 5
+#            timeoutSeconds: 1
+#          resources:
+#            limits:
+#              memory: 512Mi
+#          volumeMounts:
+#          - mountPath: /var/lib/pgsql/data
+#            name: gogs-postgres-data
+#        volumes:
+#        - name: gogs-postgres-data
+#          emptyDir: {}
+#    triggers:
+#    - type: ConfigChange
 - kind: Service
   apiVersion: v1
   metadata:
@@ -240,12 +240,12 @@ objects:
       RUN_USER = gogs
 
       [database]
-      DB_TYPE  = postgres
-      HOST     = ${APPLICATION_NAME}-postgresql:5432
-      NAME     = ${DATABASE_NAME}
-      USER     = ${DATABASE_USER}
-      PASSWD   = ${DATABASE_PASSWORD}
-
+      DB_TYPE  = sqlite3
+      #HOST     = ${APPLICATION_NAME}-postgresql:5432
+      #NAME     = ${DATABASE_NAME}
+      #USER     = ${DATABASE_USER}
+      #PASSWD   = ${DATABASE_PASSWORD}
+      PATH      = /opt/gogs/data
       [repository]
       ROOT = /opt/gogs/data/repositories
 
