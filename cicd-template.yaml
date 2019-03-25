@@ -287,12 +287,12 @@ objects:
             GOGS_HOSTNAME="gogs-$CICD_NAMESPACE.$HOSTNAME"
 
             if [ "${EPHEMERAL}" == "true" ] ; then
-              oc new-app -f https://raw.githubusercontent.com/epe105/gogs-openshift-docker/master/openshift/gogs-template.yaml \
+              oc new-app -f https://raw.githubusercontent.com/kmendez-redhat/devsecops-workshop/master/gogs/gogs-template.yaml \
                   --param=GOGS_VERSION=0.11.34 \
                   --param=HOSTNAME=$GOGS_HOSTNAME \
                   --param=SKIP_TLS_VERIFY=true
             else
-              oc new-app -f https://raw.githubusercontent.com/epe105/gogs-openshift-docker/master/openshift/gogs-persistent-template.yaml \
+              oc new-app -f https://raw.githubusercontent.com/kmendez-redhat/devsecops-workshop/master/gogs/gogs-persistent-template.yaml \
                   --param=GOGS_VERSION=0.11.34 \
                   --param=HOSTNAME=$GOGS_HOSTNAME \
                   --param=SKIP_TLS_VERIFY=true
